@@ -5,39 +5,11 @@ var jeeni = jeeni || {
         uk: {}
     }        
 };
-  /*
-jeeni.TextField = (function(){
-
-    var tagId;
-
-	privateMethod = function(){
-		console.log("IN: privateMethod");
-	}
-	
-	publicMethod = function(){
-		console.log("IN: publicMethod: " + tagId);
-	}
-	
-	jeeni.TextField = function(id){
-		console.log("Constructor");
-        tagId = id;
-	}
-
-	jeeni.TextField.prototype = {
-        constructor: jeeni.TextField,
-        foo: publicMethod
-	};
-	
-	return jeeni.TextField;
-}());
-         */
 
 jeeni.TextField = (function(){
-
     return {
         init: function(id){
             var tagId = id;
-            console.log("Constructor");
 
             function privateMethod(){
                 console.log("IN: privateMethod");
@@ -54,12 +26,13 @@ jeeni.TextField = (function(){
                 var type = tag.attr("type");
                 if(!type) {type = "text";}
 
-                var newTag = $("<div><div class='labelText'>" + label + ":</div><input class='textInput' style='width:" + width + ";'id='" + id + "' type='" + type + "'/></div>");
-                newTag.insertAfter(tag);
-                var children = newTag.children();
-                var width1 = $(children[0]).width();
-                var width2 = $(children[1]).width();
-                newTag.width(width1 + width2 + 10);
+								var inputTag = $("<input class='textInput' style='width:" + width + ";'id='" + id + "' type='" + type + "'/>");
+								var labelTag = $("<div class='labelText'>" + label + ":</div>");
+								//labelTag.width(label.length * 6 + 10);
+								var enclosingDivTag = $("<div></div>");
+								enclosingDivTag.append(labelTag);
+								enclosingDivTag.append(inputTag);
+                enclosingDivTag.insertAfter(tag);
                 tag.remove();
                 console.log("done");
             }
@@ -85,70 +58,25 @@ jeeni.findAll = function(tagName){
 	}
 	return textFields;
 }
-/*
-jeeni.TextField = (function(){
-    var TextField = function(id){
-        console.log("Constructor");
-        var tagId = id;
-        privateMethod = function(){
-            console.log("IN: privateMethod");
-        }
 
-        this.publicMethod = function(){
-            console.log("IN: publicMethod: " + tagId);
-        }
-    }
-
-    TextField.prototype = {
-        constructor: jeeni.TextField
-    };
-
-    return TextField;
-}());
-*/
 
 var divBoxes = new Array();
 $(document).ready(function() {
 
-var fields = jeeni.findAll("TEXTFIELD");
-var count = fields.length;
+// Find all the FieldSets 
+// process contents of each field set.
+//Insert dom after field sets.
+// Delete field sets
+	var fields = jeeni.findAll("TEXTFIELD");
+	var count = fields.length;
 
-for(var i = 0; i < count; i++){
-	var textField = fields[i];
-	textField.build();
-}
-/*
-	var boxes = $("fieldSetBox");
-	createBoxes(boxes)
-	
-	
-	createFields(fields);
-	
-	resizeBoxes(divBoxes);
-	
-	test();
-
-  var tf1 = $("#fnId");
-	var textField1 = new jeeni.TextField.init("fnId");
-    var textField2 = new jeeni.TextField.init("lnId");
-    var addressField = new jeeni.TextField.init("addrId");
-    var postcodeField = new jeeni.TextField.init("postcodeId");
-
-
-	textField1.build();
-    textField2.build();
-    addressField.build();
-    postcodeField.build();
-
-    console.log(textField1.tagId);
-    console.log(textField1.privateMethod);
-
-
-    console.log(textField2.tagId);
-    console.log(textField2.privateMethod);
-	*/
+	for(var i = 0; i < count; i++){
+		var textField = fields[i];
+		textField.build();
+	}
 });
 
+/*
 function test(){
   var labelText = "Test Input";
 	
@@ -177,7 +105,8 @@ function createBoxes(boxes){
 		}
 	}
 }
-
+*/
+/*
 function resizeBoxes(boxes){
   if(boxes){
 		var boxCount = boxes.length;
@@ -207,9 +136,9 @@ function getWidestChildSize(childElements){
 	}
 	return widest;
 }
+*/
 
-
-
+/*
 function createBox(inBox, i){
 	var box = $(inBox);
 	var innerHtml = box.html();
@@ -251,4 +180,4 @@ function constructTextField(id){
 	tag.remove();
 	console.log("done");
 }
-
+*/
