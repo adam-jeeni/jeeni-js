@@ -1,73 +1,149 @@
 
-
 var jeeni = jeeni || {
     co: {
         uk: {}
     }        
 };
+/*
+jeeni.FieldSet = (function(fieldSet){
+	this.fieldSet = fieldSet;
+	this.replaceTagsWidthDom = function(){
+		var children = fieldSet.children();
+	}
+});
+*/
 
-jeeni.TextField = (function(){
-    return {
-        init: function(id){
-            var tagId = id;
+jeeni.FieldSetList = (function(fieldSetListValue){
+	var fieldSetList = fieldSetListValue;
+	var jeeniTags = new Array();
+		
+	var populateChildTags = function(){
+		console.log("populateChildTags");
+		if(fieldSetList){
+			var length = fieldSetList.length;
+			for(var i = 0; i < length; i++){
+				var tag = fieldSetList[i];
+				var jTag = $(tag);
+				var children = jTag.children();
+                cacheJeeniTags(children);
+                drawJeeniTags();
+				console.log(i);
+			}
+		}
+	};
 
-            function privateMethod(){
-                console.log("IN: privateMethod");
-            }
-
-            function publicMethod(){
-                console.log("IN: publicMethod: " + tagId);
-            }
-            function constructTextField(){
-                var tag = $("#"+tagId);
-
-                var label = tag.attr("label");
-                var width = tag.attr("width");
-                var type = tag.attr("type");
-                if(!type) {type = "text";}
-
-								var inputTag = $("<input class='textInput' style='width:" + width + ";'id='" + id + "' type='" + type + "'/>");
-								var labelTag = $("<div class='labelText'>" + label + ":</div>");
-								//labelTag.width(label.length * 6 + 10);
-								var enclosingDivTag = $("<div></div>");
-								enclosingDivTag.append(labelTag);
-								enclosingDivTag.append(inputTag);
-                enclosingDivTag.insertAfter(tag);
-                tag.remove();
-                console.log("done");
-            }
-
-            return {
-                build:constructTextField,
-								foo:function(){console.log("Public method");},
-            };
+    var drawJeeniTags = function(){
+        var count = jeeniTags.length;
+        for(var i = 0; i < count; i++){
+            var jeeniTag = jeeniTags[i];
+            jeeniTag.build();
         }
-    }
-})();
+    };
 
-jeeni.findAll = function(tagName){
+	var cacheJeeniTags = function(childrenArray){
+		if(childrenArray){
+			var size = childrenArray.length;
+            for(var i = 0; i < size; i++){
+                var child = childrenArray[i];
+                if(child.localName == "textfield"){
+                    console.log("textField");
+                    var textField = new jeeni.TextField(child);
+                    var count = jeeniTags.length;
+                    jeeniTags[count] = textField;
+                    console.log(count);
+                } else {
+                    console.log("Other");
+                }
+            }
+		}
+	};
+	
+	var processTextFieldTags = function(){
+	  var size = jeeniTags.length;
+		for(var i = 0; i < size; i++){
+		  var tag = jeeniTags[i];
+			var jtag = $(tag);
+			console.log(jtag);
+		}
+	};
+	
+	var processAll = function(){
+		populateChildTags();
+		processTextFieldTags();
+		console.log("Populated child tags");
+	};
+	
+	return {
+	  processAll:processAll
+	};
+});
+
+
+jeeni.TextField = (function(tagElement){
+        var jeeniTag = tagElement;
+
+		var privateMethod = function(){
+				console.log("IN: privateMethod");
+		};
+
+		var publicMethod = function(){
+				console.log("IN: publicMethod: " + tagId);
+		};
+		var constructTextField = function (){
+            var tag = $(jeeniTag);
+
+            var id = tag.attr("id");
+            var label = tag.attr("label");
+            var width = tag.attr("width");
+            var type = tag.attr("type");
+            if(!type) {type = "text";}
+
+            var inputTag = $("<input class='textInput' style='width:" + width + ";'id='" + id + "' type='" + type + "'/>");
+            var labelTag = $("<div class='labelText'>" + label + ":</div>");
+            //labelTag.width(label.length * 6 + 10);
+            var enclosingDivTag = $("<div></div>");
+            enclosingDivTag.append(labelTag);
+            enclosingDivTag.append(inputTag);
+            enclosingDivTag.insertAfter(tag);
+            tag.remove();
+            console.log("done");
+		};
+
+		return {
+				build:constructTextField,
+					foo:function(){
+								console.log("Public method") ; 
+							}
+		 };
+});
+
+jeeni.allTags = function(tagName){
 	var fields = $(tagName);
-	var textFields = new Array();
+	var tagArray = new Array();
 	if(fields){
 		var count = fields.length;
 		for(var i = 0; i < count; i++){
-			var tag = $(fields[i]);
-			var id = tag.attr("id");
-			textFields[i] = new jeeni.TextField.init(id);
+			tagArray[i] = fields[i];
 		}
 	}
-	return textFields;
+	return tagArray;
 }
 
+//http://stackoverflow.com/questions/504803/how-do-you-create-a-method-for-a-custom-object-in-javascript
 
 var divBoxes = new Array();
 $(document).ready(function() {
 
 // Find all the FieldSets 
+var fieldSets = jeeni.allTags("fieldSet");
 // process contents of each field set.
-//Insert dom after field sets.
+var fieldSetList = new jeeni.FieldSetList(fieldSets);
+fieldSetList.processAll();
+//Replace tags with generated dom objects
+fieldSetList.replaceTagsWithDom();
+
 // Delete field sets
-	var fields = jeeni.findAll("TEXTFIELD");
+	var fields = jeeni.allTags("TEXTFIELD");
 	var count = fields.length;
 
 	for(var i = 0; i < count; i++){
